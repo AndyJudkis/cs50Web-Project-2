@@ -1,7 +1,4 @@
 // TODO
-// disable text entry on chat scroll
-// add timestamp
-// show username, timestamp with messages
 // attach file to msg (or something? . . . )
 // make it look good
 
@@ -69,6 +66,15 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(`send message: ${newMsg}`);
             socket.emit('sendMsg', newMsg);
         };
+        
+        // would like to be clear on how to do this with arrow functions. . . 
+        document.querySelector('#sendText').addEventListener("keyup", function (event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                // Trigger the button element with a click
+                document.querySelector('#sendTextButton').click();
+            }
+        });
 
     });
     
@@ -90,7 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`date=${data}`)
         
         if (data["chan"] == currChannel) {
-            document.querySelector('#chatText').value += data["text"] + "\n";    
+            //document.querySelector('#chatText').value += data["text"] + "\n"; 
+            chatText = document.querySelector('#chatText');
+            chatText.innerHTML = chatText.innerHTML + data["text"] + " <span class='dateformat'>" + data["from"] + " " + data["time"] + "</span><br />";  
+            chatText.scrollTop = chatText.scrollHeight - chatText.clientHeight;
         }
     });
     
@@ -148,13 +157,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function setChatText(msgList) {
-        let chatText = "";
+        let textLines = "";
         for (let nxt = 0; nxt < msgList.length; nxt++) {
-            console.log("add line " + msgList[nxt].text);
-            chatText += msgList[nxt].text;
-            chatText += "\n";
+            textLines += msgList[nxt].text + " <span class='dateformat'>" + msgList[nxt].from + " " + msgList[nxt].time + "</span><br />"; 
         }
-        document.querySelector('#chatText').value = chatText;
+        let chatText = document.querySelector('#chatText')
+        chatText.innerHTML = textLines;
+        chatText.scrollTop = chatText.scrollHeight - chatText.clientHeight;
         console.log("updated textArea.value")
     }
+    
 });

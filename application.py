@@ -1,5 +1,6 @@
 import os
 import requests
+from datetime import datetime
 
 from flask import Flask, jsonify, render_template, request
 from flask_socketio import SocketIO, emit
@@ -8,7 +9,10 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
-channels = { "Welcome!":  [{"text":"Welcome to FlackChat!", "from":"admin", "time":""}]}
+def timeStamp():
+    return "{:%m/%d/%y %X}".format(datetime.now())
+
+channels = { "Welcome!":  [{"text":"Welcome to FlackChat!", "from":"admin", "time": timeStamp()}]}
 
 @app.route("/")
 def index():
@@ -72,16 +76,18 @@ def setChannel(data):
 # it isn't interested in
 @socketio.on("sendMsg")
 def sendMsg(data):
+    now = timeStamp()
     print(f"current state of channels: {channels}")
     print(f"client sent us data: {data}")
     thisChannel = data["chan"]
     thisMsg = data["text"]
+    data["time"] = now
  
     if thisChannel not in channels:
         # create channel if it doesn't exist -- for instance, if server restarted but client still in chat
         print(f"name {thisChannel} doesn't exist")
         newChannel(thisChannel)
-    channels[thisChannel].append({"text": thisMsg, "from" : data["from"], "date" : ""})
+    channels[thisChannel].append({"text": thisMsg, "from" : data["from"], "time" : now})
 
     # TODO: add time stamp to msg
     # TODO: limit to 100 msgs
