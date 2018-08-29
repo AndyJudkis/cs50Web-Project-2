@@ -75,6 +75,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelector('#sendTextButton').click();
             }
         });
+        
+        // when someone uploads a file, we do the upload and then send a message with
+        // the URL.  It would be nice if we could do it all in a single HTTP transaction,
+        // but I don't know how.
+        document.getElementById("filename").onchange = () => {
+            let filename = document.getElementById("filename").files[0].name;
+            document.getElementById("upload").submit();
+            let newMsg = {"chan": currChannel,
+              "text": "file <a href='" + "uploads/" + filename +"'> " + filename + "</a> uploaded.", 
+              "from": document.querySelector('#displayName').value
+             }
+            console.log(`send message: ${newMsg}`);
+            socket.emit('sendMsg', newMsg);
+        };
 
     });
     
