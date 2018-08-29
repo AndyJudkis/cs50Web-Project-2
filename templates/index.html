@@ -9,7 +9,7 @@
         
         <style>
             body {
-                background-color: burlywood;
+                background-color: lightgreen;
             }
             .dateformat {
                 font-style: italic;
@@ -36,7 +36,12 @@
         </div>
         <br/>
         <div class="row">
-            <input type="text" id="sendText">&nbsp;<button id="sendTextButton">Send</button>&nbsp;<button type="file" id="uploadButton">File Upload</button>
+            <input type="text" id="sendText">&nbsp;<button id="sendTextButton">Send</button>&nbsp;
+        </div>
+        <div class="row" style="padding:10px;margin-top:10px; border:1px solid black;">
+            <form action="upload" method="POST" enctype="multipart/form-data" id="upload">
+                <input type="file" name="file" id="filename">
+            </form>
         </div>
         </div>
     </body>
